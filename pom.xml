@@ -19,6 +19,7 @@
         provided artifacts and others
     -->
     <properties>
+        <seam.bom.version>3.0.0.Final</seam.bom.version>
         <seam.faces.version>3.0.1.Final</seam.faces.version>
         <jboss.javaee6.version>2.0.0.Beta1</jboss.javaee6.version>
         <seam.validation.version>3.0.0.Final</seam.validation.version>
@@ -34,7 +35,7 @@
             <dependency>
                 <groupId>org.jboss.seam</groupId>
                 <artifactId>seam-bom</artifactId>
-                <version>3.0.0.Final</version>
+                <version>${seam.bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -42,8 +43,8 @@
                 <groupId>org.richfaces</groupId>
                 <artifactId>richfaces-bom</artifactId>
                 <version>${richfaces.version}</version>
-                <scope>import</scope>
                 <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

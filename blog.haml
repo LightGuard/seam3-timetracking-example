@@ -1,7 +1,9 @@
-!!!
-%html
+!!! XML
+!!! Strict
+%html(xmlns="http://www.w3.org/1999/xhtml")
   %head
     %title Getting Started With Seam 3 via Example
+    -# The rest of this should probably be in a template we include somewhere, along with the custom css
     %link(href='http://alexgorbatchev.com/pub/sh/current/styles/shCore.css' rel='Stylesheet' type='text/css')
     %link(href='http://alexgorbatchev.com/pub/sh/current/styles/shThemeDefault.css' rel='Stylesheet' type='text/css')
     %script(src='http://alexgorbatchev.com/pub/sh/current/scripts/shCore.js' type='text/javascript')
@@ -10,139 +12,87 @@
     :javascript
       SyntaxHighlighter.all();
     :css
-      .syntaxhighlighter table td { font-size: .9em !important }
+      .syntaxhighlighter table td { font-size: .9em !important; }
+      .note {
+        -moz-box-shadow: -5px -5px 5px #FAE13E;
+        -webkit-box-shadow: -5px -5px 5px #FAE13E;
+        box-shadow: -5px -5px 5px #FAE13E;
+        background-color: #FFEF8A;
+        width: 40em;
+        margin: auto;
+        padding: .5em;
+        -moz-border-radius: 15px;
+        border-radius: 15px;
+      }
   %body
     .container
-      %h1 Getting Started with Seam 3 using the Time Tracking Example
-      %h2 Introduction
-      %p
+      :maruku
+        # Getting Started with Seam 3 using the Time Tracking Example
+        ## Introduction
+
         In this tutorial we'll learn about many of the Seam 3 modules by building an example from scratch!
         The modules that we'll be using are:
-        %ul
-          %li Seam Faces
-          %li Seam Persistence
-          %li Seam Catch
-          %li Seam Validation
-          %li Seam Reports
-        -# Using maruku here (could also be markdown) for an easier link
-        :maruku
-          As an exercise for the reader, a REST interface for the application could be built using Seam Rest.
-          The code for this project is available at [github](https://github.com/seam/seam3-timetracking-example)
-      %h2 Project Setup
-      %p
+
+        * Seam Faces
+        * Seam Persistence
+        * Seam Catch
+        * Seam Validation
+        * Seam Reports
+
+        As an exercise for the reader, a REST interface for the application could be built using Seam Rest.
+        The code for this project is available at [github](https://github.com/seam/seam3-timetracking-example)
+        
+        ## Project Setup
+
         All Seam 3 modules are kept in an artifact repository, specifically the JBoss Nexus Repository. The
-        easiest way to get started with Seam 3 is to add to a maven project via the pom.xml. Below is the pom.xml
-        for the project
+        easiest way to get started with Seam 3 is to add the desired modules to a maven project via the pom.xml. The 
+        full [pom.xml](https://github.com/LightGuard/seam3-timetracking-example/blob/develop/pom.xml) is available 
+        on github. Please refer to it to see everything that is going on. Throughout this tutorial we will refer 
+        to sections of the pom in-line.
 
-        %pre{:class=>'brush: xml'}
-          :escaped
-            <?xml version="1.0" encoding="UTF-8"?>
-            <project xmlns="http://maven.apache.org/POM/4.0.0"
-                     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-                <modelVersion>4.0.0</modelVersion>
-
-                <groupId>org.jboss.seam.examples</groupId>
-                <artifactId>timetracking</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-                <packaging>war</packaging>
-                <name>Seam 3 Time Tracking Example</name>
-                <description>
-                    A sample application using various Seam 3 modules, which allows a user to
-                    log time spent working on a project.
-                </description>
-
-                <!--
-                    Versions which we will be overriding with versions since 3.0.0.Final release, arquillian,
-                    provided artifacts and others
-                -->
-                <properties>
-                    <seam.faces.version>3.0.1.Final</seam.faces.version>
-                    <jboss.javaee6.version>2.0.0.Beta1</jboss.javaee6.version>
-                    <seam.validation.version>3.0.0.Final</seam.validation.version>
-                    <seam.reports.version>3.0.0.Alpha1</seam.reports.version>
-                    <jodatime.version>1.6.2</jodatime.version>
-                    <arquillian.version>1.0.0.Alpha5</arquillian.version>
-                    <richfaces.version>4.0.0.Final</richfaces.version>
-                </properties>
-
-                <!-- Use the Seam 3 BOM to get the correct versions for most modules -->
+        Seam, as well as other JBoss projects, have a Build of Materials (BOM) pom that lists the dependencies and 
+        versions of a particular release. This is the easiest way to get the correct jars and versions together 
+        (we'll also be making use of RichFaces, so we're including it's BOM also):
+      %pre{:class=>'brush: xml'}
+        :escaped
                 <dependencyManagement>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.jboss.seam</groupId>
-                            <artifactId>seam-bom</artifactId>
-                            <version>3.0.0.Final</version>
-                            <type>pom</type>
-                            <scope>import</scope>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.richfaces</groupId>
-                            <artifactId>richfaces-bom</artifactId>
-                            <version>${richfaces.version}</version>
-                            <scope>import</scope>
-                            <type>pom</type>
-                        </dependency>
-                    </dependencies>
-                </dependencyManagement>
-
-                <dependencies>
-                    <dependency>
-                        <groupId>org.jboss.spec</groupId>
-                        <artifactId>jboss-javaee-6.0</artifactId>
-                        <version>${jboss.javaee6.version}</version>
-                        <type>pom</type>
-                        <scope>provided</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.seam.faces</groupId>
-                        <artifactId>seam-faces</artifactId>
-                        <version>${seam.faces.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.seam.catch</groupId>
-                        <artifactId>seam-catch</artifactId>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.seam.persistence</groupId>
-                        <artifactId>seam-persistence</artifactId>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.seam.validation</groupId>
-                        <artifactId>seam-validation</artifactId>
-                        <version>${seam.validation.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.jboss.seam.reports</groupId>
-                        <artifactId>seam-reports-jasper</artifactId>
-                        <version>${seam.reports.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>joda-time</groupId>
-                        <artifactId>joda-time</artifactId>
-                        <version>${jodatime.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.richfaces.ui</groupId>
-                        <artifactId>richfaces-components-ui</artifactId>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.richfaces.core</groupId>
-                        <artifactId>richfaces-core-impl</artifactId>
-                    </dependency>
-                </dependencies>
-
-                <build>
-                    <pluginManagement>
-                        <plugins>
-                            <plugin>
-                                <artifactId>maven-compiler-plugin</artifactId>
-                                <configuration>
-                                    <source>1.6</source>
-                                    <target>1.6</target>
-                                </configuration>
-                            </plugin>
-                        </plugins>
-                    </pluginManagement>
-                </build>
-            </project>
+              <dependencies>
+                  <dependency>
+                      <groupId>org.jboss.seam</groupId>
+                      <artifactId>seam-bom</artifactId>
+                      <version>${seam.bom.version}</version>
+                      <type>pom</type>
+                      <scope>import</scope>
+                  </dependency>
+                  <dependency>
+                      <groupId>org.richfaces</groupId>
+                      <artifactId>richfaces-bom</artifactId>
+                      <version>${richfaces.version}</version>
+                      <scope>import</scope>
+                      <type>pom</type>
+                  </dependency>
+              </dependencies>
+          </dependencyManagement>
+      %p
+        There may be times when you need a newer version of a module than what is in the BOM. It's recommended 
+        to use the maven properties to specify the version that will be used:
+      %pre{:class=>'brush: xml'}
+        :escaped
+                <properties>
+              <seam.bom.version>3.0.0.Final</seam.bom.version>
+              <seam.faces.version>3.0.1.Final</seam.faces.version>
+              <jboss.javaee6.version>2.0.0.Beta1</jboss.javaee6.version>
+              <seam.validation.version>3.0.0.Final</seam.validation.version>
+              <seam.reports.version>3.0.0.Alpha1</seam.reports.version>
+              <jodatime.version>1.6.2</jodatime.version>
+              <arquillian.version>1.0.0.Alpha5</arquillian.version>
+              <richfaces.version>4.0.0.Final</richfaces.version>
+          </properties> 
+      %p
+        Specifically we're using a newer version of Seam Faces, but we're also using Seam Reports and Seam Validation,
+        which were not included in the initial 3.0.0.Final release of Seam.
+      .note
+        :maruku
+          We're including jodatime because we're going to be using it directly, however, if you are using Seam with
+          Glassfish 3.1, it must be included due to [GLASSFISH-16318](http://java.net/jira/browse/GLASSFISH-16318).
+          This should be fixed in Glassfish 3.1.1 and 3.2
